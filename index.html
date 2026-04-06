@@ -2,19 +2,27 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- MindAR -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
-  
-  <!-- A-Frame -->
+
+  <!-- A-Frame MUST come first -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 
+  <!-- Then MindAR -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+
   <style>
-    body { margin: 0; overflow: hidden; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- DEBUG TEXT (remove later) -->
+  <h2 style="position:absolute; color:white; z-index:10;">Loading AR...</h2>
+
   <a-scene
     mindar-image="imageTargetSrc: targets.mind;"
     embedded
@@ -26,7 +34,15 @@
 
     <!-- Assets -->
     <a-assets>
-      <video id="vid" src="video.mp4" loop muted playsinline></video>
+      <video 
+        id="vid" 
+        src="video.mp4" 
+        loop 
+        muted 
+        playsinline 
+        webkit-playsinline
+        crossorigin="anonymous">
+      </video>
     </a-assets>
 
     <!-- Camera -->
@@ -34,8 +50,8 @@
 
     <!-- Target -->
     <a-entity mindar-image-target="targetIndex: 0">
-      
-      <!-- DEBUG BOX (remove later) -->
+
+      <!-- DEBUG BOX -->
       <a-box color="red" depth="0.1" height="1" width="1"></a-box>
 
       <!-- Video -->
@@ -51,14 +67,17 @@
   </a-scene>
 
   <script>
-    const vid = document.querySelector("#vid");
+    document.addEventListener("DOMContentLoaded", () => {
+      const video = document.querySelector("#vid");
+      const scene = document.querySelector("a-scene");
 
-    document.querySelector("a-scene").addEventListener("targetFound", () => {
-      vid.play();
-    });
+      scene.addEventListener("targetFound", () => {
+        video.play();
+      });
 
-    document.querySelector("a-scene").addEventListener("targetLost", () => {
-      vid.pause();
+      scene.addEventListener("targetLost", () => {
+        video.pause();
+      });
     });
   </script>
 
