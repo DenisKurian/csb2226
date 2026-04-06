@@ -18,7 +18,7 @@ body {
 <body>
 
 <a-scene
-  mindar-image="imageTargetSrc: targets.mind; autoStart: false;"
+  mindar-image="imageTargetSrc: targets.mind;"
   embedded
   color-space="sRGB"
   renderer="colorManagement: true;"
@@ -51,27 +51,17 @@ body {
 </a-scene>
 
 <script>
-const scene = document.querySelector("a-scene");
-const video = document.querySelector("#vid");
+document.addEventListener("DOMContentLoaded", () => {
+  const video = document.querySelector("#vid");
+  const scene = document.querySelector("a-scene");
 
-window.addEventListener("load", () => {
-  // Try to start automatically
-  const startAR = () => {
-    scene.components["mindar-image-system"].start();
-  };
+  scene.addEventListener("targetFound", () => {
+    video.play();
+  });
 
-  startAR();
-
-  // fallback: if browser blocks, first tap will start it
-  document.body.addEventListener("click", startAR, { once: true });
-});
-
-scene.addEventListener("targetFound", () => {
-  video.play();
-});
-
-scene.addEventListener("targetLost", () => {
-  video.pause();
+  scene.addEventListener("targetLost", () => {
+    video.pause();
+  });
 });
 </script>
 
