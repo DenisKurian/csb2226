@@ -1,40 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-      font-family: sans-serif;
-    }
-
-    #startButton {
-      position: absolute;
-      z-index: 10;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 15px 25px;
-      font-size: 18px;
-      background: white;
-      border: none;
-      border-radius: 10px;
-    }
-  </style>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+</style>
 </head>
 
 <body>
 
-<button id="startButton">Start AR</button>
-
 <a-scene
-  mindar-image="imageTargetSrc: targets.mind;"
+  mindar-image="imageTargetSrc: targets.mind; autoStart: false;"
   embedded
   color-space="sRGB"
   renderer="colorManagement: true;"
@@ -56,8 +40,6 @@
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
   <a-entity mindar-image-target="targetIndex: 0">
-    <a-box color="red" depth="0.1" height="1" width="1"></a-box>
-
     <a-video
       src="#vid"
       width="1"
@@ -69,22 +51,28 @@
 </a-scene>
 
 <script>
-  const startButton = document.querySelector("#startButton");
-  const scene = document.querySelector("a-scene");
-  const video = document.querySelector("#vid");
+const scene = document.querySelector("a-scene");
+const video = document.querySelector("#vid");
 
-  startButton.addEventListener("click", () => {
+window.addEventListener("load", () => {
+  // Try to start automatically
+  const startAR = () => {
     scene.components["mindar-image-system"].start();
-    startButton.style.display = "none";
-  });
+  };
 
-  scene.addEventListener("targetFound", () => {
-    video.play();
-  });
+  startAR();
 
-  scene.addEventListener("targetLost", () => {
-    video.pause();
-  });
+  // fallback: if browser blocks, first tap will start it
+  document.body.addEventListener("click", startAR, { once: true });
+});
+
+scene.addEventListener("targetFound", () => {
+  video.play();
+});
+
+scene.addEventListener("targetLost", () => {
+  video.pause();
+});
 </script>
 
 </body>
